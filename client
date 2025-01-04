@@ -1,0 +1,22 @@
+# client_file_transfer.py
+import socket
+
+HOST = '127.0.0.1'  # Локальний хост
+PORT = 65433  # Номер порту, відповідний серверу
+
+file_to_send = 'file_to_send.txt'  # Текстовий файл для відправки
+
+try:
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client_socket:
+        client_socket.connect((HOST, PORT))
+        print(f"Connected to server at {HOST}:{PORT}")
+        with open(file_to_send, 'rb') as file:  # Відкриваємо файл в режимі байтів
+            data = file.read(1024)
+            while data:
+                client_socket.sendall(data)  # Надсилаємо файл частинами
+                data = file.read(1024)
+        print("File sent successfully.")
+except FileNotFoundError:
+    print(f"Error: The file '{file_to_send}' does not exist.")
+except ConnectionRefusedError:
+    print(f"Error: Unable to connect to server at {HOST}:{PORT}. Is it running?")
