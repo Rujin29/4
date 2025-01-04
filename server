@@ -1,0 +1,22 @@
+# server_file_transfer.py
+import socket
+
+HOST = '127.0.0.1'  # Локальний хост
+PORT = 65433  # Номер порту
+
+with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
+    server_socket.bind((HOST, PORT))
+    server_socket.listen()
+    print(f"Server is listening for file transfer on {HOST}:{PORT}")
+
+    while True:
+        conn, addr = server_socket.accept()
+        with conn:
+            print(f"Connected by {addr}")
+            with open('received_file.txt', 'wb') as file:  # Файл для збереження
+                while True:
+                    data = conn.recv(1024)
+                    if not data:  # Коли дані передано
+                        print("File transfer complete.")
+                        break
+                    file.write(data)
